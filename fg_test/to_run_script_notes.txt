@@ -1,0 +1,52 @@
+# -------------------------------------------------------------# FACILITYGRID AUTOMATION SCRIPTS SETUP & RUN NOTES
+
+1. Configuration (.env)
+You can now configure the scripts entirely from the `.env` file instead of passing CLI arguments!
+Located in: `d:\Projects\PythonPractice\.env`
+
+In this file, set your credentials and file paths:
+- `FG_USERNAME`: Your FacilityGrid email
+- `FG_PASSWORD`: Your FacilityGrid password
+- `FG_FOLDER_NAME`: The folder where your Excel files are (e.g., `Day3_Data`)
+- `FG_WEB_TEST_FILE_NAME`: The input Excel file name for the Web Script (e.g., `Issues_FG_2026202609210932_Manufacturer_missing.xlsx`)
+- `FG_WEB_WORKERS`: Number of parallel browser worker pages (optional, defaults to 5)
+- `FG_API_TEST_FILE_NAME`: The input Excel file name for the API Script (e.g., `Issues_FG_2026202609210932_Manufacturer_missing.xlsx`)
+- `PHASE_1_FILE_FOR_API_WEB_TEST`: The Phase 1 output report file name to process when running Phase 2 standalone (e.g., `api_scan_results_20260921_102659.xlsx`)
+
+2. Run the Web Automation Script
+This script uses Playwright to open chromium and interact with the FG website in parallel worker pages.
+
+Command:
+```bash
+python fg_web_automation.py --limit 0 --workers 5
+```
+*(By default, it will automatically use the folder and file name you provided in .env! You can pass --workers N to run N pages in parallel, e.g. 5 workers, and --batch-size N for Excel save frequency.)*
+
+3. Run the API Automation Script (Hybrid API + DB + Web UI Cross-Check)
+This script runs fast parallel REST API + DB checks (Phase 1). If API asset UUIDs are null/empty, it automatically launches Playwright worker pages (Phase 2) to cross-check live web pages for Equipment, Subtasks, or Parameters!
+
+Full Run (Phase 1 + Phase 2):
+```bash
+python fg_api_automation.py --limit 0 --workers 15 --web-workers 5
+```
+
+Run Phase 2 Standalone Only (Web UI Cross-Check using PHASE_1_FILE_FOR_API_WEB_TEST from .env):
+```bash
+python fg_api_automation.py --phase-2 --limit 0 --web-workers 5
+```
+*(Options: --file <path> to override file; --no-web-check to disable Phase 2 on full runs.)*
+
+Excel Output Sheets in Report File:
+1. `API Scan Results`         : Main sheet with all rows and full color-coded legend
+2. `Our Code Issues`          : PURPLE rows (API has asset info, but local DB is missing it -> Our Code Fix Needed)
+3. `FG API Issues`           : ORANGE rows (API asset UUIDs null, but Equipment/Subtask/Parameters found on Web UI)
+4. `Cyan - Web Mfg Found`     : CYAN rows (API provided asset UUIDs AND Manufacturer info WAS FOUND on Web UI)
+5. `Yellow - Web Mfg Missing` : YELLOW rows (API provided asset UUIDs, BUT Manufacturer info WAS MISSING on Web UI)
+
+Color Legend in Excel Output:
+- CYAN      : API Provided Asset UUIDs AND Manufacturer Info WAS FOUND on Web UI
+- YELLOW    : API Provided Asset UUIDs, BUT Manufacturer Info Missing on Web UI
+- PURPLE    : DB Mismatch (API has asset info, DB is missing it) -> OUR SIDE CODE FIX NEEDED!
+- ORANGE    : API Asset UUIDs Null, but Info Found on Web UI (Equipment/Subtask/Parameters) -> FACILITYGRID API ISSUE!
+- LIGHT BLUE: Nowhere specified on Web UI (Equipment/Subtask/Parameters), but Valid Responsibility Match
+- RED       : Nowhere specified on Web UI (Equipment/Subtask/Parameters) & No Match Responsibility

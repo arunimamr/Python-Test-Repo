@@ -1,0 +1,35 @@
+# Shared configuration, spreadsheets, and HTML parsing
+python-dotenv==1.2.2
+openpyxl==3.1.5
+beautifulsoup4==4.14.3
+soupsieve==2.8.3
+et-xmlfile==2.0.0
+typing-extensions==4.15.0
+
+# FacilityGrid API, browser automation, and PostgreSQL
+pandas==3.0.5
+requests==2.33.1
+playwright==1.63.0
+psycopg2-binary
+# Browser binaries: python -m playwright install chromium
+
+# SharePoint authentication
+msal==1.36.0
+
+# Numerical and machine-learning examples
+numpy==1.26.4
+matplotlib
+scipy
+scikit-learn
+
+# PDF extraction and OCR
+PyMuPDF
+pdf2image
+pypdf
+pytesseract==0.3.13
+Pillow==12.2.0
+# OCR also needs the Tesseract executable; pdf2image needs Poppler.
+
+# Outlook COM integration (Windows only)
+pywin32==311; sys_platform == "win32"
+

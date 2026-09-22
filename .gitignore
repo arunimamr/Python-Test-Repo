@@ -1,0 +1,46 @@
+# Local environment and secrets
+.env
+.env.*
+# Python environments and bytecode
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+
+# Python build and tool caches
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+.ipynb_checkpoints/
+
+# Local editor and operating system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+~$*
+
+# Browser sessions and generated extraction output
+.fg_playwright_profile/
+.fg_api_playwright_profile/
+/email_extraction/output/
+/email_extraction/output_*/
+
